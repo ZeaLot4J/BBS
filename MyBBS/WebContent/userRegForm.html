@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>用户注册</title>
+<style>
+#registeruser{
+	width:800px;
+	height:400px;
+	margin:auto auto;
+}
+fieldset{
+	color:#A52A2A;
+	border:2px solid #B413EC;
+	border-radius:5px;
+}
+fieldset legend{
+	text-align:center;
+}
+table{
+	margin:auto auto;
+	border-collapse:collapse;
+	
+}
+table td{
+	padding:10px;
+	vertical-align:top;
+	text-align:right;
+}
+table input{
+	width:250px;
+	height:25px;
+	outline:none;
+	border-radius:5px;
+	border:1px solid #B413EC;
+	padding-left:7px;
+	font-size:15px;
+}
+table textarea{
+	border-radius:5px;
+	border:1px solid #B413EC;
+	padding:5px;
+	outline:none;
+	font-size:15px;
+}
+#btn{
+	width:300px;
+	margin:auto;
+}
+button{
+	border:1px solid #EE82EE;
+	background-color:#EE82EE;
+	border-radius:5px;
+	width:100px;
+	height:40px;
+	font-size:16px;
+	margin:auto auto;
+	outline:none;
+	color:#fff;
+	margin-left:20px;
+}
+button:hover{
+	background-color:#f18ef1;
+	border:1px solid #f18ef1;
+	cursor:pointer;
+}
+</style>
+</head>
+<body>
+<div id="registeruser">
+	<fieldset>
+		<legend>用户注册</legend>
+		<table>
+			<tr>
+				<td><label for="username">用户名:</label></td>
+				<td>
+					<input @blur="confirmUsername()"  v-model.trim.lazy="user.username" id="username" name="username" type="text" placeholder="请填写用户名">
+				</td>
+			</tr>
+			<tr>
+				<td><label for="password">密码:</label></td>
+				<td><input @blur="confirmPwd()" v-model.trim="user.password" id="password" name="password" type="password" placeholder="请填写密码"></td>
+			</tr>
+			<tr>
+				<td><label for="password2">确认密码:</label></td>
+				<td><input @blur="confirmTwoPwd()" v-model.trim="confirmPassword" id="password2" name="password2" type="password" placeholder="请重复一次密码"></td>
+			</tr>
+			<tr>
+				<td><label for="phone">手机号码:</label></td>
+				<td><input @blur="confirmTel()" v-model.trim.number="user.phone" id="phone" name="phone" type="text" placeholder="请填写手机号码"></td>
+			</tr>
+			<tr>
+				<td><label for="addr">地址:</label></td>
+				<td><textarea @blur="confirmAddr()" rows="5" cols="29" v-model.trim.number="user.addr" id="addr" name="addr" placeholder="请填写地址"></textarea></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><span v-show="alert">{{errorMsg}}</span></td>
+			</tr>
+		</table>
+		<div id="btn">
+		    <button type="button" @click="submit()">sign up</button>
+			<button type="button" @click="clear()">clear</button>
+		</div>
+	</fieldset>
+</div>
+<script src="js/vue.js"></script>
+<script src="js/vue-resource.js"></script>
+<script src="js/cookie.js"></script>
+<script>
+Vue.http.options.emulateJSON = true;
+var vm = new Vue({
+	el : '#registeruser',
+	data : {
+		user:{
+			username:'',
+			password:'',
+			phone:'',
+			addr:''
+		},
+		confirmPassword:'',
+		alert:true,
+		errorMsg:''
+	},
+	created:function(){
+		//setCookie("username","Zealot",30);
+		checkCookie();
+	},
+	methods:{
+		clear:function(){
+			vm.user.username = '';
+			vm.user.password = '';
+			vm.confirmPassword = '';
+			vm.user.phone = '';
+			vm.user.addr = '';
+		},
+		confirmPwd:function(){
+			if(vm.user.password==''){
+				vm.errorMsg = '!密码为必填项';
+				vm.alert = true;
+			}else{
+				vm.errorMsg = '';
+				vm.alert = false;
+			}
+		},
+		confirmTwoPwd:function(){
+			if(vm.user.password!=vm.confirmPassword){
+				vm.errorMsg = '!两次密码输入不一致';
+				vm.alert = true;
+			}else{
+				vm.errorMsg = '';
+				vm.alert = false;
+			}
+		},
+		confirmUsername:function(){
+			if(vm.user.username==''){
+				vm.errorMsg = '!用户名为必填项';
+				vm.alert= true;
+			}else{
+				vm.errorMsg = '';
+				vm.alert = false;
+			}
+		},
+		confirmTel:function(){
+			if(typeof(vm.user.phone)!='number'){
+				vm.errorMsg = '!请输入正确的电话号码';
+				vm.alert= true;
+			}else{
+				vm.errorMsg = '';
+				vm.alert = false;
+			}
+		},
+		confirmAddr:function(){
+			if(vm.user.addr==''){
+				vm.errorMsg = '!地址为必填项';
+				vm.alert= true;
+			}else{
+				vm.errorMsg = '';
+				vm.alert = false;
+			}
+		},
+		submit:function(){
+			if(vm.alert){
+				vm.errorMsg = '!请填写完整信息';
+				return;
+			}
+			vm.createUser();
+		},
+		createUser:function(){
+			vm.$http.post('service/newUser',vm.user).then((response) => {
+				alert(response.status);
+				/* if(response.code==1){
+					alert("注册成功");
+				}else{
+					alert("注册失败");
+				} */
+			},(response) => {
+				alert("请求发生错误");	
+			}).catch(function(response){
+				alert("发生异常");
+			});
+		}
+	}
+});
+
+
+</script>
+</body>
+</html>

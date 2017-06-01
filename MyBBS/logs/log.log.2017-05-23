@@ -1,0 +1,15 @@
+2017-05-23 01:11:31  [ main:0 ] - [ DEBUG ]  ==>  Preparing: select * from forum_post where fbid = ? 
+2017-05-23 01:11:31  [ main:19 ] - [ DEBUG ]  ==> Parameters: null
+2017-05-23 01:11:31  [ main:100 ] - [ DEBUG ]  <==      Total: 0
+2017-05-23 01:11:53  [ main:0 ] - [ DEBUG ]  ==>  Preparing: select forum_post.fpid, fptitle, forum_post.fuid, forum_user.funame, fppubtime, fpmodifytime, fpendtime, reply_num.replynum, fbname, forum_board.fbid from forum_post inner join forum_user on forum_post.fuid = forum_user.fuid left join (select fpid, count(prid) as replynum from post_reply group by fpid) as reply_num on forum_post.fpid = reply_num.fpid inner join forum_board on forum_post.fbid = forum_board.fbid limit ?,? 
+2017-05-23 01:11:53  [ main:23 ] - [ DEBUG ]  ==> Parameters: 0(Integer), 20(Integer)
+2017-05-23 01:11:54  [ main:283 ] - [ DEBUG ]  <==      Total: 3
+2017-05-23 01:12:16  [ main:0 ] - [ DEBUG ]  ==>  Preparing: select forum_post.fpid, fptitle, forum_post.fuid, forum_user.funame, fppubtime, fpmodifytime, fpendtime, reply_num.replynum, fbname, forum_board.fbid from forum_post inner join forum_user on forum_post.fuid = forum_user.fuid left join (select fpid, count(prid) as replynum from post_reply group by fpid) as reply_num on forum_post.fpid = reply_num.fpid inner join forum_board on forum_post.fbid = forum_board.fbid limit ?,? 
+2017-05-23 01:12:16  [ main:18 ] - [ DEBUG ]  ==> Parameters: 0(Integer), 20(Integer)
+2017-05-23 01:12:16  [ main:72 ] - [ DEBUG ]  <==      Total: 3
+2017-05-23 01:16:04  [ main:0 ] - [ DEBUG ]  ==>  Preparing: select forum_post.fpid, fptitle, forum_post.fuid, forum_user.funame, fppubtime, fpmodifytime, fpendtime, reply_num.replynum, fbname, forum_board.fbid from forum_post inner join forum_user on forum_post.fuid = forum_user.fuid left join (select fpid, count(prid) as replynum from post_reply group by fpid) as reply_num on forum_post.fpid = reply_num.fpid inner join forum_board on forum_post.fbid = forum_board.fbid 
+2017-05-23 01:16:04  [ main:23 ] - [ DEBUG ]  ==> Parameters: 
+2017-05-23 01:16:04  [ main:47 ] - [ DEBUG ]  <==      Total: 3
+2017-05-23 01:19:44  [ main:0 ] - [ DEBUG ]  ==>  Preparing: select forum_post.fpid as fpid, fptitle, forum_post.fuid as fuid, forum_user.funame as funame, fppubtime, fpmodifytime, fpendtime, reply_num.replynum as replynum, fbname, forum_board.fbid as fbid from forum_post inner join forum_user on forum_post.fuid = forum_user.fuid left join (select fpid, count(prid) as replynum from post_reply group by fpid) as reply_num on forum_post.fpid = reply_num.fpid inner join forum_board on forum_post.fbid = forum_board.fbid 
+2017-05-23 01:19:44  [ main:18 ] - [ DEBUG ]  ==> Parameters: 
+2017-05-23 01:19:44  [ main:101 ] - [ DEBUG ]  <==      Total: 3

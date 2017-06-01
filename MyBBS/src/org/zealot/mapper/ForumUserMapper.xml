@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zealot.mapper.ForumUserMapper">
+	<select id="checkForumUsersExistence" resultType="int">
+		select fuid from forum_user where funame = #{_parameter}
+	</select>
+	
+	<select id="checkOneLoginUser" parameterType="ForumUser" resultType="ForumUser">
+		select * from forum_user where funame = #{username} and fupwd = #{password}
+	</select>
+
+	<select id="selectUserIdByUsername" resultType="java.lang.Integer">
+		select fuid as userId from forum_user where funame = #{_parameter}
+	</select>
+
+	<select id="selectForumUserByUsername" parameterType="ForumUser" resultType="ForumUser">
+		select fuid as userId, funame as username, fuemail as email, fuavator avator, furegtime as registerTime from forum_user where funame = #{username} 
+	</select>
+
+	<insert id="insertOneForumUser" parameterType="ForumUser">
+		insert into forum_user(funame,fupwd,fuemail,furegtime,furole)
+	    values(#{username}, #{password}, #{email}, now(), 1)
+	</insert>
+	
+	<update id="updateForumUserAvator" parameterType="ForumUser" >
+		update forum_user set fuavator = #{avator} where fuid = #{userId}
+	</update>
+	
+	<update id="updateUsername" parameterType="ForumUser" >
+		update forum_user set funame = #{username} where fuid = #{userId}
+	</update>
+</mapper>

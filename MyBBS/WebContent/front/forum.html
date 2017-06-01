@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>大学生创新论坛:最新帖子</title>
+	<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+	
+	<script src="../js/vue.js"></script>
+</head>
+<body>
+<div id="box">
+	<nav id="pageheader" class="navbar navbar-default">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="">大学生创新论坛</a>
+	    </div>
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav navbar-right" v-show="shown1">
+	        <li><a href="../login.html">登录</a></li>
+	        <li><a href="javascript:void(0)">|</a></li>
+	        <li><a href="../register.html">注册</a></li>
+	      </ul>
+	      <ul class="nav navbar-nav navbar-right" v-show="shown2">
+	        <li><a type="button" class="btn btn-sm btn-default" href="../core/pubpost.html">我要发贴</a></li>
+	      	<li><a href="javascript:void(0)">|</a></li>
+	        <li><a  href="../core/forumuser.html"><span class="glyphicon glyphicon-user" aria-hidden="true">&nbsp;</span>:&nbsp;{{username}}</a></li>
+	        <li><a href="javascript:void(0)">|</a></li>
+	        <li><a href="javascript:void(0)" @click="exit()"><span class="glyphicon glyphicon-log-out" aria-hidden="true">&nbsp;</span>退出</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+	
+	<div class="container-fluid">
+	  <div class="row">
+	    <div class="col-md-2">
+		  <ul v-for="(item,index) in forumBoardList" class="nav nav-pills nav-stacked">
+	        <li role="presentation"><a  @click="changeBoard(item.boardId, item.boardName)" href="javascript:void(0)">{{item.boardName}}</a></li>
+	      </ul>
+		</div>
+	    <div class="col-md-10" >
+		  <div class="panel panel-primary">
+		  <div class="panel-heading">最新帖子</div>
+	      <table class="table table-hover table-striped text-center">
+	      	<thead>
+	      	  <tr>
+	      	  	<td>#</td>
+	      	  	<td>头像</td>
+	      	    <td>发贴人</td>
+	      	    <td>标题</td>
+	      	    <td>发布时间</td>
+	      	    <td>上次修改时间</td>
+	      	    <td>回复数量</td>
+	      	    <td>所属版块</td>
+	      	    <td>状态</td>
+	      	  </tr>
+	      	</thead>
+	      	<tbody>
+	      	  <tr v-for="(item,index) in latestPostList">
+	      	  	<td>{{index+1}}</td>
+	      	    <td>
+	      	      <img  :style="{width:'40px',height:'20px'}" :src="item.forumUser.avator" alt="头像"/>
+	      	    </td>
+	      	    <td>{{item.forumUser.username}}</td>
+	      	    <td><a  @click="changePost(item.postId, item.postTitle)" href="javascript:void(0)">{{item.postTitle}}</a></td>
+	      	    <td>{{item.postPublishTime}}</td>
+	      	    <td>{{item.postModifyTime==undefined ? '' : item.postModifyTime}}</td>
+	      	    <td>{{item.replyNum==undefined ? '0' : item.replyNum}}</td>
+	      	    <td>{{item.forumBoard.boardName}}</td>
+	      	    <td>{{item.postEndTime!=undefined ? '已结贴' : '进行中'}}</td>
+	      	  </tr>
+	      	</tbody>
+	      </table>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
+	
+	<div class="row-fluid">
+	  <div class="col-md-12">
+	    <address style="color:black;text-align:center;margin-top:60px;">
+		  <small>Copyright &copy; XXX All Rights Reserved</small><br>
+		</address>
+	  </div>
+	</div>
+</div>
+<script src="../js/vue-resource.js"></script>
+<script src="../js/cookie.js"></script>
+<script>
+var vm = new Vue({
+	el : '#box',
+	data : {
+		shown1 : false,
+		shown2 : false,
+		username : '',
+		forumBoardList : [],
+		latestPostList : []
+	},
+	mounted : function(){
+		this.checkLogedIn();
+		this.displayBoard();
+		this.displayLatestPosts();
+	},
+	computed : {
+		
+	},
+	methods : {
+		exit : function(){
+			delCookie('forumUser', '/MyBBS/');
+			this.$http({
+				url : '../logout.action',
+				method : 'put',
+				emulateJSON : true
+			}).then((response) => {
+				this.checkLogedIn();
+			},(response) => {
+				alert("请求发生错误");	
+			}).catch(function(response){
+				alert("发生异常");
+			});
+		},
+		checkLogedIn : function(){
+			var vm = this;
+			if(checkCookie('forumUser')){
+				vm.shown1 = false;
+				vm.shown2 = true;
+				vm.username = getCookie('forumUser');
+			}else{
+				vm.shown1 = true;
+				vm.shown2 = false;
+			}
+		},
+		displayBoard : function(){
+			var vm = this;
+			vm.$http({
+				url : '../forum.action?op=displayBoard',
+				method : 'get',
+				emulateJSON : true
+			}).then((response) => {
+				console.log(response);
+				vm.forumBoardList = response.data.data;
+			},(response) => {
+				alert("请求发生错误");	
+			}).catch(function(response){
+				alert("发生异常");
+			});
+		},
+		changeBoard : function(boardId, boardName){
+			setCookie('boardName', boardName, 1);
+			location.href = 'forumpost.html?boardId='+boardId;
+		},
+		changePost : function(postId, postTitle){
+			location.href = 'postdetails.html?postId='+postId;
+		},
+		displayLatestPosts : function(){
+			var vm = this;
+			vm.$http({
+				url : '../forum.action?op=displayPosts',
+				method : 'get',
+				emulateJSON : true
+			}).then((response) => {
+				console.log(response);
+				vm.latestPostList = response.data.data;
+			},(response) => {
+				alert("请求发生错误");	
+			}).catch(function(response){
+				alert("发生异常");
+			});
+		}
+	}
+});
+
+</script>
+</body>
+</html>
+

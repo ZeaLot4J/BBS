@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zealot.mapper.ForumPostMapper">
+	<!-- 根据版块ID查询其下所有帖子 -->
+	<select id="selectPostsByBoardId" parameterType="java.util.Map" resultType="ForumPost">
+		select * from forum_post where fbid = #{boardId}
+	</select>
+	
+	<!-- 分页查询所有帖子，如果有版块ID，则查询此版块下的帖子 -->
+	<select id="selectPostsByPaging" parameterType="java.util.Map" resultMap="forumPostMap1">
+		select forum_post.fpid as fpid, fptitle, forum_post.fuid as fuid, forum_user.funame as funame, fuavator, fppubtime, fpmodifytime, fpendtime, reply_num.replynum as replynum, fbname, forum_board.fbid as fbid from forum_post
+        inner join forum_user on forum_post.fuid = forum_user.fuid
+        left join (select fpid, count(prid) as replynum from post_reply group by fpid) as reply_num on forum_post.fpid = reply_num.fpid
+        inner join forum_board on forum_post.fbid = forum_board.fbid
+        <if test="boardId!=null">
+        	where forum_board.fbid = #{boardId}
+        </if>
+        order by fppubtime desc
+		limit #{startNum},#{pageSize}
+	</select>
+	<resultMap type="ForumPost" id="forumPostMap1">
+		<id property="postId" column="fpid" />
+		<result property="postTitle" column="fptitle" />
+		<result property="postPublishTime" column="fppubtime" />
+		<result property="postModifyTime" column="fpmodifytime" />
+		<result property="postEndTime" column="fpendtime" />
+		<result property="replyNum" column="replynum" />
+		<association property="forumUser" javaType="ForumUser">
+			<id property="userId" column="fuid" />
+			<result property="username" column="funame" />
+			<result property="avator" column="fuavator" />
+		</association>
+		<association property="forumBoard" javaType="ForumBoard">
+			<id property="boardId" column="fbid"/>
+			<result property="boardName" column="fbname"/>
+		</association>
+	</resultMap>
+	
+	<!-- 根据帖子ID查询帖子信息，包括发贴人和所属版块 -->
+	<select id="selectPostByPostId" parameterType="java.util.Map" resultMap="forumPostMap2">
+		select fpid, fptitle, fpcontent, fppubtime, fpmodifytime, fpendtime, forum_post.fuid as fuid, forum_user.funame as funame, fuavator, fuemail, forum_post.fbid as fbid, fbname from forum_post
+		inner join forum_user on forum_post.fuid = forum_user.fuid		
+		inner join forum_board on forum_post.fbid = forum_board.fbid
+		where fpid = #{postId}
+	</select>
+	<resultMap type="ForumPost" id="forumPostMap2">
+		<id property="postId" column="fpid" />
+		<result property="postTitle" column="fptitle" />
+		<result property="postContent" column="fpcontent" />
+		<result property="postPublishTime" column="fppubtime" />
+		<result property="postModifyTime" column="fpmodifytime" />
+		<result property="postEndTime" column="fpendtime" />
+		<association property="forumUser" javaType="ForumUser">
+			<id property="userId" column="fuid" />
+			<result property="username" column="funame" />
+			<result property="avator" column="fuavator" />
+			<result property="email" column="fuemail" />
+		</association>
+		<association property="forumBoard" javaType="ForumBoard">
+			<id property="boardId" column="fbid"/>
+			<result property="boardName" column="fbname"/>
+		</association>
+	</resultMap>
+	
+	<select id="selectPostsByUserId" parameterType="java.util.Map" resultMap="forumPostMap1">
+		select forum_post.fpid as fpid, fptitle, forum_post.fuid as fuid, forum_user.funame as funame, fuavator, fppubtime, fpmodifytime, fpendtime, reply_num.replynum as replynum, fbname, forum_board.fbid as fbid from forum_post
+        inner join forum_user on forum_post.fuid = forum_user.fuid
+        left join (select fpid, count(prid) as replynum from post_reply group by fpid) as reply_num on forum_post.fpid = reply_num.fpid
+        inner join forum_board on forum_post.fbid = forum_board.fbid
+       	where forum_post.fuid = #{userId}
+        order by fppubtime desc
+		limit #{startNum},#{pageSize}
+	</select>
+	
+	<insert id="insertOneForumPost" parameterType="ForumPost">
+		insert into forum_post(fptitle, fpcontent, fppubtime, fuid, fbid) 
+		values(#{postTitle},#{postContent},now(),#{forumUser.userId},#{forumBoard.boardId})
+	</insert>
+</mapper>

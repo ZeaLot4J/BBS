@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zealot.mapper.PostReplyMapper">
+	<!-- 查询某个帖子下的所有回贴信息 -->
+	<select id="selectAllRepliesByPostId" parameterType="java.util.Map" resultMap="postReplyMap">
+		select prid, prcontent, prpubtime, prmodifytime, forum_user.fuid as fuid, funame, fuavator
+		from post_reply 
+		inner join forum_user on post_reply.fuid = forum_user.fuid
+		where post_reply.fpid = #{postId}
+	</select>
+	<resultMap type="PostReply" id="postReplyMap">
+		<id property="replyId" column="prid" />
+		<result property="replyContent" column="prcontent" />
+		<result property="replyPublishTime" column="prpubtime" />
+		<result property="replyModifyTime" column="prmodifytime" />
+		<association property="forumUser" javaType="ForumUser">
+			<id property="userId" column="fuid" />
+			<result property="username" column="funame" />
+			<result property="avator" column="fuavator" />
+		</association>
+	</resultMap>
+	
+	
+	<insert id="insertOneReply" parameterType="PostReply">
+		insert into post_reply(prcontent, prpubtime, fpid, fuid) values(#{replyContent},now(),#{forumPost.postId},#{forumUser.userId})
+	</insert>
+</mapper>

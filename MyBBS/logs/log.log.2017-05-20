@@ -1,0 +1,5 @@
+2017-05-20 20:04:15  [ main:0 ] - [ DEBUG ]  ==>  Preparing: insert into forum_user(funame,fupwd,fuemail,furegtime,furole) values(?, ?, ?, now(), 1) 
+2017-05-20 20:04:15  [ main:20 ] - [ DEBUG ]  ==> Parameters: zealot(String), 11111111111111111111111111111111(String), 704956780@qq.com(String)
+2017-05-20 20:04:53  [ main:0 ] - [ DEBUG ]  ==>  Preparing: insert into forum_user(funame,fupwd,fuemail,furegtime,furole) values(?, ?, ?, now(), 1) 
+2017-05-20 20:04:53  [ main:29 ] - [ DEBUG ]  ==> Parameters: zealot(String), 11111111111111111111111111111111(String), 704956780@qq.com(String)
+2017-05-20 20:04:53  [ main:30 ] - [ DEBUG ]  <==    Updates: 1

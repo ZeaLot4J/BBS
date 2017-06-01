@@ -1,0 +1,6 @@
+2017-05-24 22:02:35  [ main:0 ] - [ DEBUG ]  ==>  Preparing: select * from forum_user where funame = ? 
+2017-05-24 22:02:35  [ main:34 ] - [ DEBUG ]  ==> Parameters: zealot(String)
+2017-05-24 22:02:35  [ main:60 ] - [ DEBUG ]  <==      Total: 1
+2017-05-24 22:04:31  [ main:0 ] - [ DEBUG ]  ==>  Preparing: select fuid as userId, funame as username, fuemail as email, fuavator avator from forum_user where funame = ? 
+2017-05-24 22:04:31  [ main:26 ] - [ DEBUG ]  ==> Parameters: zealot(String)
+2017-05-24 22:04:31  [ main:42 ] - [ DEBUG ]  <==      Total: 1

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zealot.mapper.ReplyCommentMapper">
+	<!-- 查询某个回帖子下的所有评论信息 -->
+	<select id="selectAllCommentsByReplyId" parameterType="java.util.Map" resultMap="postReplyMap">
+		select rcid, rccontent, rcpubtime, rcmodifytime, forum_user.fuid as fuid, funame, fuavator
+		from reply_comment
+		inner join forum_user on reply_comment.fuid = forum_user.fuid
+		where prid = #{replyId}
+	</select>	
+	<resultMap type="ReplyComment" id="postReplyMap">
+		<id property="commentId" column="rcid" />
+		<result property="commentContent" column="rccontent" />
+		<result property="commentPublishTime" column="rcpubtime" />
+		<result property="commentModifyTime" column="rcmodifytime" />
+		<association property="forumUser" javaType="ForumUser">
+			<id property="userId" column="fuid" />
+			<result property="username" column="funame" />
+			<result property="avator" column="fuavator" />
+		</association>
+	</resultMap>
+	
+	<insert id="insertOneComment" parameterType="ReplyComment">
+		insert into reply_comment(rccontent,rcpubtime,prid, fuid) values(#{commentContent},now(), #{postReply.replyId}, #{forumUser.userId})
+	</insert>
+</mapper>
